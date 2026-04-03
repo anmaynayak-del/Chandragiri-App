@@ -1,0 +1,20 @@
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/app.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/i18n.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/manifest.json
+  Cache-Control: public, max-age=3600
+
+/styles.css
+  Cache-Control: public, max-age=86400
+
+/icon-honey.png
+  Cache-Control: public, max-age=86400
