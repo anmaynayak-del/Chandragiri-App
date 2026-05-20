@@ -1,68 +1,56 @@
-// App Version 5.6.1 — increment CACHE_NAME when deploying to bust stale caches
-const CACHE_NAME = 'chandragiri-cache-v15';
-const URLS_TO_CACHE = [
+const CACHE_NAME = 'chandragiri-v6.1.0';
+const ASSETS_TO_CACHE = [
     './',
     './index.html',
-    './styles.css',
     './app.js',
     './i18n.js',
+    './styles.css',
     './manifest.json',
-    './icon-honey.png?v=2',
-    // NOTE: Google Fonts is intentionally excluded — it sets Cache-Control: private
-    // which prevents the Cache API from storing the response. It is loaded from
-    // network when online and gracefully degrades to system-ui fonts when offline.
-    'https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js',
-    'https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    './icon-honey.png',
+    './logo-clean.png'
 ];
 
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async cache => {
-            await Promise.all(
-                URLS_TO_CACHE.map(url =>
-                    cache.add(url).catch(error => {
-                        console.warn('[SW] Failed to pre-cache:', url, error);
-                        return null;
-                    })
-                )
-            );
-            await self.skipWaiting();
-        })
+        caches.open(CACHE_NAME).then(cache => {
+            return cache.addAll(ASSETS_TO_CACHE);
+        }).then(() => self.skipWaiting())
     );
 });
 
 self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then(keys => {
+        caches.keys().then(cacheNames => {
             return Promise.all(
-                keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
             );
         }).then(() => self.clients.claim())
     );
 });
 
 self.addEventListener('fetch', event => {
+    // Network first, falling back to cache
     if (event.request.method !== 'GET') return;
 
-    // Network-first strategy to reduce stale app.js/index.html issues after deployments.
     event.respondWith(
-        fetch(event.request)
-            .then(networkResponse => {
-                if (networkResponse && networkResponse.ok) {
-                    const clone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-                }
-                return networkResponse;
-            })
-            .catch(async () => {
-                const cachedResponse = await caches.match(event.request, { ignoreSearch: true });
-                if (cachedResponse) return cachedResponse;
-                if (event.request.mode === 'navigate') {
-                    const cachedIndex = await caches.match('./index.html');
-                    if (cachedIndex) return cachedIndex;
-                }
-                return new Response('Offline and not cached', { status: 503, statusText: 'Service Unavailable' });
-            })
+        fetch(event.request).then(response => {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+            });
+            return response;
+        }).catch(() => caches.match(event.request, { ignoreSearch: true }))
     );
+});
+
+// Allow manual cache clearing via messaging
+self.addEventListener('message', event => {
+    if (event.data?.type === 'CLEAR_APP_CACHE') {
+        caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))))
+            .then(() => self.registration.unregister());
+    }
 });

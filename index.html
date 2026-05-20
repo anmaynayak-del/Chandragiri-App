@@ -1,34 +1,134 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="vibrant">
+<html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A clean and modern web application to manage farm workers and agricultural locations smoothly and efficiently.">
+    <meta name="description"
+        content="A clean and modern web application to manage farm workers and agricultural locations smoothly and efficiently.">
     <title>Chandragiri Estate | Dashboard</title>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5.6.1">
-    
+    <!-- DNS Preconnect: Firebase & gstatic servers (Problem 7 fix) -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <!-- Google Fonts: Inter - non-blocking async load (Problem 1 fix) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+    </noscript>
+    <link rel="stylesheet" href="styles.css?v=6.1.0">
+
+    <!-- Preload the logo so splash screen shows instantly -->
+    <link rel="preload" href="icon-honey.png?v=2" as="image">
+
+    <!-- Critical Inlined CSS for Instant Splash Screen -->
+    <style>
+        /* Critical CSS: layout/radius only - bg colors are handled by styles.css per theme */
+        :root {
+            --radius-md: 14px;
+            --radius-pill: 999px;
+            --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .splash-logo {
+            width: 140px;
+            height: 140px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            animation: splash-pulse 2.5s ease-in-out infinite;
+            object-fit: cover;
+        }
+
+        .splash-spinner {
+            width: 48px;
+            height: 48px;
+            position: relative;
+        }
+
+        .spinner-ring {
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: splash-spin 1s linear infinite;
+        }
+
+        @keyframes splash-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes splash-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.04);
+                opacity: 0.95;
+            }
+        }
+    </style>
+
+    <script>
+        window.APP_BUILD_VERSION = '6.1.0';
+    </script>
+
     <!-- Progressive Web App Mobile Framework -->
     <script>
         (function attachManifestForWebProtocols() {
             if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') return;
             const manifestLink = document.createElement('link');
             manifestLink.rel = 'manifest';
-            manifestLink.href = './manifest.json';
+            manifestLink.href = './manifest.json?v=6.1.0';
             document.head.appendChild(manifestLink);
         })();
     </script>
     <meta name="theme-color" content="#8B5CF6">
     <link rel="apple-touch-icon" href="./icon-honey.png?v=2">
-    
-    <!-- Firebase Cloud Node SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-    
-    <!-- SheetJS for local Excel Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
+
 </head>
+
 <body>
     <!-- Premium Splash Screen -->
     <div id="splash-screen">
@@ -43,12 +143,23 @@
 
     <style>
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 
@@ -69,39 +180,55 @@
             text-align: center;
             box-shadow: var(--shadow-lg);
         ">
-            <img src="icon-honey.png?v=2" alt="Chandragiri Estate Logo" style="width: 120px; height: 120px; border-radius: 20px; margin-bottom: 24px; box-shadow: var(--shadow-md); object-fit: cover;">
-            <h2 style="color: var(--text-strong); font-size: 1.75rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.04em;" data-i18n="login.title">Chandragiri Estate</h2>
-            <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; font-weight: 500;" data-i18n="login.subtitle">Sign in to manage your estate</p>
-            
+            <img src="icon-honey.png?v=2" alt="Chandragiri Estate Logo"
+                style="width: 120px; height: 120px; border-radius: 20px; margin-bottom: 24px; box-shadow: var(--shadow-md); object-fit: cover;">
+            <h2 style="color: var(--text-strong); font-size: 1.75rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.04em;"
+                data-i18n="login.title">Chandragiri Estate</h2>
+            <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; font-weight: 500;"
+                data-i18n="login.subtitle">Sign in to manage your estate</p>
+
             <div style="margin-bottom: 20px; text-align: left;">
-                <label style="display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;" data-i18n="login.username">Username</label>
-                <input id="login-user" type="text" placeholder="Username" data-i18n-placeholder="login.usernamePlaceholder" style="
+                <label
+                    style="display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;"
+                    data-i18n="login.username">Username</label>
+                <input id="login-user" type="text" placeholder="Username"
+                    data-i18n-placeholder="login.usernamePlaceholder" style="
                     width: 100%; padding: 14px 18px;
                     background: var(--surface-solid); border: 1px solid var(--border);
                     border-radius: var(--radius-sm); color: var(--text-strong); font-size: 1rem; font-family: inherit;
                     outline: none; transition: all 0.2s;
-                " onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-light)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                " onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-light)'"
+                    onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
             </div>
-            
+
             <div style="margin-bottom: 32px; text-align: left;">
-                <label style="display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;" data-i18n="login.password">Password</label>
+                <label
+                    style="display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;"
+                    data-i18n="login.password">Password</label>
                 <div style="position: relative;">
-                    <input id="login-pass" type="password" placeholder="Password" data-i18n-placeholder="login.passwordPlaceholder" style="
+                    <input id="login-pass" type="password" placeholder="Password"
+                        data-i18n-placeholder="login.passwordPlaceholder" style="
                         width: 100%; padding: 14px 50px 14px 18px;
                         background: var(--surface-solid); border: 1px solid var(--border);
                         border-radius: var(--radius-sm); color: var(--text-strong); font-size: 1rem; font-family: inherit;
                         outline: none; box-sizing: border-box; transition: all 0.2s;
-                    " onkeydown="if(event.key==='Enter') window.doLogin()" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-light)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
-                    <button type="button" onclick="const p = document.getElementById('login-pass'); if(p.type === 'password') { p.type = 'text'; this.innerText = '🙈'; } else { p.type = 'password'; this.innerText = '👁️'; }" style="
+                    " onkeydown="if(event.key==='Enter') window.doLogin()"
+                        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-light)'"
+                        onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                    <button type="button"
+                        style="
                         position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
                         background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #94A3B8;
                         padding: 0; display: flex; align-items: center; justify-content: center; outline: none;
-                    " title="Toggle Password Visibility" data-i18n-title="login.togglePassword">👁️</button>
+                    " title="Toggle Password Visibility"
+                        data-i18n-title="login.togglePassword">Show</button>
                 </div>
             </div>
-            
-            <div id="login-error" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600; display: none;" data-i18n="login.invalid">❌ Invalid credentials</div>
-            
+
+            <div id="login-error"
+                style="color: #ef4444; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600; display: none;"
+                data-i18n="login.invalid">Invalid credentials</div>
+
             <button onclick="window.doLogin()" style="
                 width: 100%; padding: 16px; margin-top: 24px;
                 background: var(--primary);
@@ -111,155 +238,167 @@
                 box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3);
                 transition: all 0.3s;
                 display: flex; align-items: center; justify-content: center; gap: 8px;
-            " onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'">
+            " onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)'"
+                onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)'">
                 <span data-i18n="login.signIn">Sign In</span>
-                <span style="font-size: 1.2rem;">→</span>
+                <span style="font-size: 1.2rem;">-&gt;</span>
             </button>
         </div>
     </div>
-    
+
     <div class="app-container">
-        <button class="mobile-nav-toggle" onclick="window.toggleMobileSidebar()" aria-label="Open menu" data-i18n-aria-label="menu.openMenu">&#9776;</button>
+        <button class="mobile-nav-toggle" onclick="window.toggleMobileSidebar()" aria-label="Open menu"
+            data-i18n-aria-label="menu.openMenu"></button>
         <div class="mobile-nav-backdrop" onclick="window.closeMobileSidebar()"></div>
 
         <!-- Sidebar Navigation -->
         <nav class="sidebar" aria-label="Main Navigation" data-i18n-aria-label="menu.mainNavigation">
             <div class="sidebar-header">
-
-                <h2>Chandragiri <span style="font-size: 0.8rem; font-weight: 500; opacity: 0.6;">Estate</span></h2>
-                <div style="margin-top: 8px; text-align: right;">
-                    <button onclick="window.doLogout()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:0.8rem; font-family:inherit; padding: 4px 8px; border-radius: 8px;" title="Logout" data-i18n-title="common.logout" data-i18n="common.logout">Logout</button>
-                </div>
-                <div class="theme-switcher">
-                    <button class="theme-btn active" data-tb="light" onclick="window.setTheme('light')" title="Light Mode" data-i18n-title="menu.lightMode">☀️</button>
-                    <button class="theme-btn" data-tb="dark" onclick="window.setTheme('dark')" title="Dark Mode" data-i18n-title="menu.darkMode">🌙</button>
-                    <button class="theme-btn" data-tb="vibrant" onclick="window.setTheme('vibrant')" title="Vibrant Mode" data-i18n-title="menu.vibrantMode">🚀</button>
-                </div>
+                <img src="logo-clean.png" alt="Chandragiri Estate Logo" class="sidebar-logo">
+                <h2 class="sidebar-title">Chandragiri Estate</h2>
             </div>
             <ul class="nav-links">
-                <li><button class="nav-btn active" data-target="dashboard" id="nav-dashboard" data-i18n="nav.dashboard">Dashboard</button></li>
+                <li><button class="nav-btn active" data-target="dashboard" id="nav-dashboard"
+                        data-i18n="nav.dashboard">Dashboard</button></li>
                 <li><button class="nav-btn" data-target="farms" id="nav-farms" data-i18n="nav.farms">Farms</button></li>
-                <li><button class="nav-btn" data-target="workers" id="nav-workers" data-i18n="nav.workers">Workers</button></li>
-                <li><button class="nav-btn" data-target="attendance" id="nav-attendance" data-i18n="nav.attendance">Attendance</button></li>
-                <li><button class="nav-btn" data-target="payments" id="nav-payments" data-i18n="nav.payments">Payments</button></li>
-                <li><button class="nav-btn" data-target="profile" id="nav-profile" data-i18n="nav.profile">My Profile</button></li>
-                <li id="nav-admin-btn" style="display: none;"><button onclick="window.openAdminPanel()" class="nav-btn" style="color:var(--primary); font-weight:800;" data-i18n="admin.title">Admin Panel</button></li>
-                
+                <li><button class="nav-btn" data-target="workers" id="nav-workers"
+                        data-i18n="nav.workers">Workers</button></li>
+                <li><button class="nav-btn" data-target="attendance" id="nav-attendance"
+                        data-i18n="nav.attendance">Attendance</button></li>
+                <li><button class="nav-btn" data-target="payments" id="nav-payments"
+                        data-i18n="nav.payments">Payments</button></li>
+                <li><button class="nav-btn" data-target="profile" id="nav-profile" data-i18n="nav.profile">My
+                        Profile</button></li>
+                <li><button onclick="window.doLogout()" class="nav-btn logout-btn" id="nav-logout"><span
+                            class="logout-icon-text"></span>
+                        <span data-i18n="common.logout">Logout</span></button></li>
+
             </ul>
         </nav>
 
         <!-- Main Container -->
-    <div id="main-container" style="display: none;">
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="view-section active">
-                <header class="section-header flex-between">
-                    <div>
-                        <h1 class="greeting-text" style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"></h1>
-                        <h2 style="font-size: 1.25rem; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;" data-i18n="dashboard.overview">Dashboard Overview</h2>
-                    </div>
-                    <div style="display:flex; gap:12px;">
-                        <button class="btn btn-primary" onclick="window.toggleModal('export-modal')" data-i18n="dashboard.exportData">Export Data (Excel)</button>
-                    </div>
-                </header>
-                <div class="dashboard-grid">
-                    <div class="stat-card">
-                        <h3 data-i18n="dashboard.totalFarms">Total Farms</h3>
-                        <p class="stat-number" id="dashboard-farms-count">0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 data-i18n="dashboard.totalWorkers">Total Workers</h3>
-                        <p class="stat-number" id="dashboard-workers-count">0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 data-i18n="dashboard.totalPendingPayouts">Total Pending Payouts</h3>
-                        <p class="stat-number text-warning" id="dashboard-pending-payouts">₹0</p>
-                    </div>
-                </div>
-
-                <!-- Weather Section -->
-                <div id="dashboard-weather-container" class="stagger-anim" style="margin-top: 32px; display: none;">
-                    <!-- Populated dynamically -->
-                </div>
-                
-                <div id="admin-backup-panel" class="admin-backup-card" style="display: none;">
-                    <div class="admin-backup-copy">
-                        <h3 data-i18n="dashboard.monthlyBackupReminder">Monthly Backup Reminder</h3>
-                        <p data-i18n="dashboard.monthlyBackupBody">Save one simple Excel sheet every month. This helps if a phone is reset, storage is cleared, or the app is moved to another device.</p>
-                        <div id="admin-backup-status" class="admin-backup-status" data-i18n="dashboard.noMonthlyBackup">No monthly backup saved yet.</div>
-                    </div>
-                    <div class="admin-backup-actions">
-                        <button class="btn btn-primary" onclick="window.backupNow()" data-i18n="dashboard.saveThisMonth">Save This Month</button>
-                        <button class="btn btn-secondary" onclick="document.getElementById('import-excel-input').click()" style="margin-top: 8px; border: 1px solid var(--primary); color: var(--primary);" data-i18n="dashboard.restoreBackupExcel">Restore Backup (.xlsx)</button>
-                        <div style="margin-top: 12px; width: 100%;">
-                            <input id="google-sheets-webhook-url" type="url" placeholder="Paste Google Apps Script Web App URL" data-i18n-placeholder="sheets.webhookPlaceholder" class="admin-form-input" style="width: 100%; margin-bottom: 8px;" />
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <button class="btn btn-secondary" type="button" onclick="window.saveGoogleSheetsConfig()" style="border: 1px solid var(--primary); color: var(--primary);" data-i18n="dashboard.saveSheetsUrl">Save Sheets URL</button>
-                                <button class="btn btn-primary" id="sync-google-sheets-btn" type="button" onclick="window.syncToGoogleSheets()" data-i18n="common.uploadToGoogleSheets">Upload to Google Sheets</button>
-                            </div>
-                            <div id="google-sheets-sync-status" style="margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);" data-i18n="sheets.syncNotConfigured">No Google Sheets sync configured yet.</div>
+        <div id="main-container" style="display: none;">
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="view-section active">
+                    <header class="section-header flex-between">
+                        <div>
+                            <h1 class="greeting-text"
+                                style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;">
+                            </h1>
+                            <h2 style="font-size: 1.25rem; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;"
+                                data-i18n="dashboard.overview">Dashboard Overview</h2>
                         </div>
-                        <input type="file" id="import-excel-input" accept=".xlsx" style="display:none;" onchange="window.handleExcelImport(event)">
+                        <div style="display:flex; gap:12px;">
+                            <button class="btn btn-secondary" id="dashboard-admin-shortcut"
+                                onclick="window.openAdminPanel()" style="display:none;" data-i18n="admin.title">Admin
+                                Panel</button>
+                            <button class="btn btn-primary" onclick="window.toggleModal('export-modal')"
+                                data-i18n="dashboard.exportData">Export Data (Excel)</button>
+                        </div>
+                    </header>
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <h3 data-i18n="dashboard.totalFarms">Total Farms</h3>
+                            <p class="stat-number" id="dashboard-farms-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 data-i18n="dashboard.totalWorkers">Total Workers</h3>
+                            <p class="stat-number" id="dashboard-workers-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 data-i18n="dashboard.totalPendingPayouts">Total Pending Payouts</h3>
+                            <p class="stat-number text-warning" id="dashboard-pending-payouts">&#8377;0</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Admin-only: Clear All Payments -->
-                <div id="admin-clear-payments" style="display: none; margin-top: 24px;">
-                    <button class="btn" onclick="window.clearAllPayments()" style="
+                    <!-- Weather Section -->
+                    <div id="dashboard-weather-container" class="stagger-anim" style="margin-top: 32px; display: none;">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div id="admin-backup-panel" class="admin-backup-card" style="display: none;">
+                        <div class="admin-backup-copy">
+                            <h3 data-i18n="dashboard.monthlyBackupReminder">Monthly Backup Reminder</h3>
+                            <p data-i18n="dashboard.monthlyBackupBody">Save one simple Excel sheet every month. This
+                                helps if a phone is reset, storage is cleared, or the app is moved to another device.
+                            </p>
+                            <div id="admin-backup-status" class="admin-backup-status"
+                                data-i18n="dashboard.noMonthlyBackup">No monthly backup saved yet.</div>
+                        </div>
+                        <div class="admin-backup-actions">
+                            <button class="btn btn-primary" onclick="window.backupNow()"
+                                data-i18n="dashboard.saveThisMonth">Save This Month</button>
+                            <button class="btn btn-secondary"
+                                onclick="document.getElementById('import-excel-input').click()"
+                                style="border: 1px solid var(--primary); color: var(--primary);"
+                                data-i18n="dashboard.restoreBackupExcel">Restore Backup (.xlsx)</button>
+                            <input id="google-sheets-webhook-url" type="url"
+                                placeholder="Paste Google Apps Script Web App URL"
+                                data-i18n-placeholder="sheets.webhookPlaceholder" class="admin-form-input"
+                                style="flex: 2 1 250px;" />
+                            <button class="btn btn-secondary" type="button" onclick="window.saveGoogleSheetsConfig()"
+                                style="border: 1px solid var(--primary); color: var(--primary);"
+                                data-i18n="dashboard.saveSheetsUrl">Save Sheets URL</button>
+                            <button class="btn btn-primary" id="sync-google-sheets-btn" type="button"
+                                onclick="window.syncToGoogleSheets()" data-i18n="common.uploadToGoogleSheets">Upload
+                                Google Sheets</button>
+                            <div id="google-sheets-sync-status"
+                                style="flex: 1 1 100%; font-size: 0.85rem; color: var(--text-muted); text-align: left;"
+                                data-i18n="sheets.syncNotConfigured">No Google Sheets sync configured yet.</div>
+                            <input type="file" id="import-excel-input" accept=".xlsx" style="display:none;"
+                                onchange="window.handleExcelImport(event)">
+                        </div>
+                    </div>
+
+                    <!-- Admin-only: Clear All Payments -->
+                    <div id="admin-clear-payments" style="display: none; margin-top: 24px;">
+                        <button class="btn" onclick="window.clearAllPayments()" style="
                         padding: 14px 28px;
                         background: linear-gradient(135deg, #DC2626, #991B1B);
                         color: white; border: none; border-radius: var(--radius-pill);
                         font-family: inherit; font-size: 1rem; font-weight: 700;
                         cursor: pointer; box-shadow: 0 4px 12px rgba(220,38,38,0.3);
-                    ">🗑️ <span data-i18n="dashboard.clearAllPayments">Clear All Payments (Admin Only)</span></button>
-                </div>
-            </section>
+                    "><span
+                                data-i18n="dashboard.clearAllPayments">Clear All Payments (Admin Only)</span></button>
+                </section>
+                <!-- Farms Section -->
+                <section id="farms" class="view-section">
+                    <header class="section-header flex-between">
+                        <div>
+                            <h2 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"
+                                data-i18n="farms.title">Farms & Estates</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;"
+                                data-i18n="farms.subtitle">Manage your agricultural locations.</p>
+                        </div>
+                        <button class="btn btn-primary edit-gate" onclick="window.openFarmModal()"
+                            data-i18n="farms.add">+ Add Farm</button>
+                    </header>
 
-            <!-- Farms Section -->
-            <section id="farms" class="view-section">
-                <header class="section-header flex-between">
-                    <div>
-                        <h1 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;" data-i18n="farms.title">Farms & Estates</h1>
-                        <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;" data-i18n="farms.subtitle">Manage your agricultural locations.</p>
-                    </div>
-                    <button class="btn btn-primary edit-gate" onclick="window.openFarmModal()" data-i18n="farms.add">+ Add Farm</button>
-                </header>
-                
-                <div class="cards-grid" id="farms-list">
-                    <div class="card">
-                        <h3>Sunny Valley Farm</h3>
-                        <p class="card-subtitle">Location: Westfield</p>
-                        <span class="status-badge status-active">Active</span>
-                    </div>
-                    <div class="card">
-                        <h3>Oakridge Estate</h3>
-                        <p class="card-subtitle">Location: North Hills</p>
-                        <span class="status-badge status-active">Active</span>
-                    </div>
-                </div>
-            </section>
+                    <div class="cards-grid" id="farms-list"></div>
+                </section>
 
-            <!-- Workers Section -->
-            <section id="workers" class="view-section">
-                <header class="section-header flex-between">
-                    <div>
-                        <h1 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;" data-i18n="workers.title">Workforce</h1>
-                        <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;" data-i18n="workers.subtitle">Manage personnel and crew details.</p>
-                    </div>
-                    <button class="btn btn-primary edit-gate" onclick="window.openWorkerModal()" data-i18n="workers.add">+ Add Worker</button>
-                </header>
+                <!-- Workers Section -->
+                <section id="workers" class="view-section">
+                    <header class="section-header flex-between">
+                        <div>
+                            <h2 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"
+                                data-i18n="workers.title">Workforce</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;"
+                                data-i18n="workers.subtitle">Manage personnel and crew details.</p>
+                        </div>
+                        <button class="btn btn-primary edit-gate" onclick="window.openWorkerModal()"
+                            data-i18n="workers.add">+ Add Worker</button>
+                    </header>
 
-                <!-- Worker Search Bar -->
-                <div style="margin-bottom: 16px; position: relative;">
-                    <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none;">🔍</span>
-                    <input
-                        id="workers-search-input"
-                        type="text"
-                        placeholder="Search workers by name or role..."
-                        data-i18n-placeholder="workers.searchPlaceholder"
-                        oninput="window.filterWorkersList(this.value)"
-                        style="
+                    <!-- Worker Search Bar -->
+                    <div style="margin-bottom: 16px; position: relative;">
+                        <span
+                            style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none;">&#128269;</span>
+                        <input id="workers-search-input" type="text" placeholder="Search workers by name or role..."
+                            data-i18n-placeholder="workers.searchPlaceholder"
+                            oninput="window.filterWorkersList(this.value)" style="
                             width: 100%; box-sizing: border-box;
                             padding: 12px 16px 12px 42px;
                             border-radius: var(--radius-md);
@@ -269,107 +408,110 @@
                             font-size: 1rem; font-family: inherit;
                             outline: none;
                             transition: border-color 0.2s, box-shadow 0.2s;
-                        "
-                        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px var(--primary-light)'"
-                        onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'"
-                    >
-                </div>
-                
-                <div class="cards-grid" id="workers-list">
-                    <div class="card worker-card">
-                        <div class="worker-avatar">JD</div>
-                        <div class="worker-info">
-                            <h3>John Doe</h3>
-                            <p class="card-subtitle">Tractor Operator</p>
-                        </div>
+                        " onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px var(--primary-light)'"
+                            onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
                     </div>
-                    <div class="card worker-card">
-                        <div class="worker-avatar bg-accent">AS</div>
-                        <div class="worker-info">
-                            <h3>Anna Smith</h3>
-                            <p class="card-subtitle">Harvester</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
-            <!-- Attendance Section -->
-            <section id="attendance" class="view-section">
-                <header class="section-header flex-between">
-                    <div>
-                        <h1 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;" data-i18n="attendance.title">Attendance</h1>
-                        <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;" data-i18n="attendance.subtitle">Track work hours for personnel.</p>
-                    </div>
-                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                        <button class="btn btn-secondary" id="export-attendance-btn" onclick="window.exportAttendanceExcel()" style="height: fit-content; margin-top: 8px;" data-i18n="attendance.export">Export Attendance (Excel)</button>
-                        <button class="btn" id="admin-clear-attendance-btn" onclick="window.openAttendanceClearModal()" style="display:none; height: fit-content; margin-top: 8px; background: linear-gradient(135deg, #DC2626, #991B1B); color: white; border: none; box-shadow: 0 4px 12px rgba(220,38,38,0.3);" data-i18n="attendance.clear">Save Excel &amp; Delete Attendance</button>
-                        <button class="btn btn-secondary" id="admin-restore-attendance-btn" onclick="window.restoreLastAttendanceSnapshot()" style="display:none; height: fit-content; margin-top: 8px; border: 1px solid var(--primary); color: var(--primary);" data-i18n="attendance.restoreLastDeleted">Restore Last Deleted Attendance</button>
-                    </div>
-                </header>
-                
-                <div class="attendance-controls card">
-                    <div class="control-group flex-1" style="min-width: 140px;">
-                        <label for="attendance-date" id="date-label" data-i18n="attendance.startDate">Start Date</label>
-                        <input type="date" id="attendance-date" class="form-select" onchange="window.renderAttendanceView()">
-                    </div>
-                    <div class="control-group flex-1" id="end-date-group" style="min-width: 140px;">
-                        <label for="attendance-date-end" data-i18n="attendance.endDate">End Date</label>
-                        <input type="date" id="attendance-date-end" class="form-select">
-                    </div>
-                    <div class="control-group flex-1">
-                        <label for="attendance-farm-select" data-i18n="attendance.farm">Farm</label>
-                        <div class="flex-between gap-16">
-                            <select id="attendance-farm-select" class="form-select flex-1">
-                                <option value="" disabled selected data-i18n="common.selectFarm">Select a farm...</option>
+                    <div class="cards-grid" id="workers-list"></div>
+                    <div id="workers-no-results"
+                        style="display:none; text-align:center; padding: 32px; color: var(--text-muted); font-size: 1rem;">&#128269; <span data-i18n="workers.noWorkersSearch">No workers
+                            found matching your search.</span></div>
+                </section>
+
+                <!-- Attendance Section -->
+                <section id="attendance" class="view-section">
+                    <header class="section-header flex-between">
+                        <div>
+                            <h2 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"
+                                data-i18n="attendance.title">Attendance</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-body); font-weight: 500; margin-bottom: 24px;"
+                                data-i18n="attendance.subtitle">Track work hours for personnel.</p>
+                        </div>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                            <button class="btn btn-secondary" id="export-attendance-btn"
+                                onclick="window.exportAttendanceExcel()" style="height: fit-content; margin-top: 8px;"
+                                data-i18n="attendance.export">Export Attendance (Excel)</button>
+                            <button class="btn" id="admin-clear-attendance-btn"
+                                onclick="window.openAttendanceClearModal()"
+                                style="display:none; height: fit-content; margin-top: 8px; background: linear-gradient(135deg, #DC2626, #991B1B); color: white; border: none; box-shadow: 0 4px 12px rgba(220,38,38,0.3);"
+                                data-i18n="attendance.clear">Save Excel &amp; Delete Attendance</button>
+                            <button class="btn btn-secondary" id="admin-restore-attendance-btn"
+                                onclick="window.restoreLastAttendanceSnapshot()"
+                                style="display:none; height: fit-content; margin-top: 8px; border: 1px solid var(--primary); color: var(--primary);"
+                                data-i18n="attendance.restoreLastDeleted">Restore Last Deleted Attendance</button>
+                        </div>
+                    </header>
+
+                    <div class="attendance-controls card">
+                        <div class="control-group flex-1" style="min-width: 140px;">
+                            <label for="attendance-date" id="date-label" data-i18n="attendance.startDate">Start
+                                Date</label>
+                            <input type="date" id="attendance-date" class="form-select"
+                                onchange="window.renderAttendanceView()">
+                        </div>
+                        <div class="control-group flex-1" id="end-date-group" style="min-width: 140px;">
+                            <label for="attendance-date-end" data-i18n="attendance.endDate">End Date</label>
+                            <input type="date" id="attendance-date-end" class="form-select"
+                                onchange="window.renderAttendanceSummary()">
+                        </div>
+                        <div class="control-group flex-1">
+                            <label for="attendance-farm-select" data-i18n="attendance.farm">Farm</label>
+                            <select id="attendance-farm-select" class="form-select flex-1" style="width: 100%;"
+                                onchange="currentUser?.permissions?.canEdit ? window.renderAttendanceView() : window.renderAttendanceSummary()">
+                                <option value="" disabled selected data-i18n="common.selectFarm">Select a farm...
+                                </option>
                             </select>
-                            <button class="btn btn-secondary flex-shrink-0" onclick="window.openFarmModal()" data-i18n="attendance.newFarm">+ New Farm</button>
                         </div>
                     </div>
-                </div>
 
-                <div id="attendance-state-msg" class="empty-state">
-                    <span data-i18n="attendance.selectPrompt">Please select a date and a farm to track attendance.</span>
-                </div>
+                    <div id="attendance-state-msg" class="empty-state">
+                        <span data-i18n="attendance.selectPrompt"
+                            style="color: var(--text-body); font-weight: 500;">Please select a date and a farm to track
+                            attendance.</span>
+                    </div>
 
-                <div id="attendance-summary-container" style="display: none;">
-                    <div class="card">
-                        <h3 id="summary-title" style="margin-bottom: 20px; color: var(--text-strong);" data-i18n="attendance.summary">Work Summary</h3>
-                        <div id="attendance-summary-list">
-                            <!-- Populated dynamically -->
+                    <div id="attendance-summary-container" style="display: none;">
+                        <div class="card">
+                            <h3 id="summary-title" style="margin-bottom: 20px; color: var(--text-strong);"
+                                data-i18n="attendance.summary">Work Summary</h3>
+                            <div id="attendance-summary-list">
+                                <!-- Populated dynamically -->
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="attendance-list-container" style="display: none;">
-                    <div class="attendance-list" id="attendance-list">
-                        <!-- Workers populated here -->
-                    </div>
-                    
-                    <div class="attendance-actions">
-                        <button class="btn btn-primary" id="save-attendance-btn" style="display: none;" data-i18n="attendance.save">Save Attendance</button>
-                    </div>
-                </div>
-            </section>
+                    <div id="attendance-list-container" style="display: none;">
+                        <div class="attendance-list" id="attendance-list">
+                            <!-- Workers populated here -->
+                        </div>
 
-            <!-- Payments Section -->
-            <section id="payments" class="view-section">
-                <header class="section-header flex-between">
-                    <div>
-                        <h1 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;" data-i18n="payments.title">Payments</h1>
-                        <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;" data-i18n="payments.subtitle">Wage tracking and payout history.</p>
+                        <div class="attendance-actions">
+                            <button class="btn btn-primary" id="save-attendance-btn" style="display: none;"
+                                data-i18n="attendance.save">Save Attendance</button>
+                        </div>
                     </div>
-                </header>
+                </section>
 
-                <!-- Payments Worker Search Bar -->
-                <div style="margin-bottom: 16px; position: relative;">
-                    <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none;">🔍</span>
-                    <input
-                        id="payments-search-input"
-                        type="text"
-                        placeholder="Search worker by name..."
-                        data-i18n-placeholder="payments.searchPlaceholder"
-                        oninput="window.filterPaymentsTable(this.value)"
-                        style="
+                <!-- Payments Section -->
+                <section id="payments" class="view-section">
+                    <header class="section-header flex-between">
+                        <div>
+                            <h2 style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"
+                                data-i18n="payments.title">Payments</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;"
+                                data-i18n="payments.subtitle">Wage tracking and payout history.</p>
+                        </div>
+                    </header>
+
+                    <div id="payments-section-wrapper">
+
+                        <!-- Payments Worker Search Bar -->
+                        <div id="payments-search-wrapper" style="margin-bottom: 16px; position: relative;">
+                            <span
+                                style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none;">&#128269;</span>
+                            <input id="payments-search-input" type="text" placeholder="Search worker by name..."
+                                data-i18n-placeholder="payments.searchPlaceholder"
+                                oninput="window.filterPaymentsTable(this.value)" style="
                             width: 100%; box-sizing: border-box;
                             padding: 12px 16px 12px 42px;
                             border-radius: var(--radius-md);
@@ -379,410 +521,615 @@
                             font-size: 1rem; font-family: inherit;
                             outline: none;
                             transition: border-color 0.2s, box-shadow 0.2s;
-                        "
-                        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px var(--primary-light)'"
-                        onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'"
-                    >
-                </div>
-                
-                <div class="card table-container">
-                    <table class="data-table" id="payments-table">
-                        <thead>
-                            <tr>
-                                <th data-i18n="payments.workerName">Worker Name</th>
-                                <th data-i18n="payments.dailyWage">Daily Wage</th>
-                                <th data-i18n="payments.totalDays">Total Days</th>
-                                <th data-i18n="payments.earned">Earned</th>
-                                <th data-i18n="payments.paid">Paid</th>
-                                <th data-i18n="payments.loans">Loans</th>
-                                <th data-i18n="payments.pending">Pending</th>
-                                <th class="actions-col" data-i18n="payments.actions">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="payments-table-body">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                    <div id="payments-no-results" style="display:none; text-align:center; padding: 32px; color: var(--text-muted); font-size: 1rem;">🔍 <span data-i18n="payments.noWorkersSearch">No workers found matching your search.</span></div>
-                </div>
-            </section>
-            <!-- My Profile Section -->
-            <section id="profile" class="view-section">
-                <header class="section-header">
-                    <div>
-                        <h1 id="profile-section-title" style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;" data-i18n="profile.title">My Profile</h1>
-                        <p id="profile-section-subtitle" style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;" data-i18n="profile.subtitle">Manage your login and bank information.</p>
-                    </div>
-                </header>
-                <div class="card" style="max-width: 500px; margin-top: 24px;">
-                    <div style="margin-bottom: 20px;">
-                        <label id="profile-name-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.fullName">Full Name</label>
-                        <input id="profile-name" type="text" placeholder="Enter your full name" data-i18n-placeholder="profile.fullNamePlaceholder" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong);">
-                    </div>
-                    <div style="margin-bottom: 24px;">
-                        <label id="profile-phone-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.phone">Phone Number</label>
-                        <input id="profile-phone" type="text" placeholder="Enter your phone number" data-i18n-placeholder="profile.phonePlaceholder" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 24px;">
-                        <label id="profile-language-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.language">Language</label>
-                        <select id="profile-language" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); font-family: inherit; margin-bottom: 24px;">
-                            <option value="en" data-i18n="common.english">English</option>
-                            <option value="kn" data-i18n="common.kannada">Kannada</option>
-                            <option value="hi" data-i18n="common.hindi">Hindi</option>
-                        </select>
-                        
-                        <div style="padding-top: 16px; border-top: 1px dashed var(--border);">
-                            <p id="profile-bank-title" style="font-weight: 700; font-size: 0.9rem; color: var(--primary); margin-bottom: 16px; text-transform: uppercase;" data-i18n="profile.bankTransferDetails">Bank Transfer Details</p>
-                             
-                            <label id="profile-bank-name-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.bankName">Bank Name</label>
-                            <input id="profile-bank-name" type="text" placeholder="e.g., HDFC Bank" data-i18n-placeholder="profile.bankNamePlaceholder" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 16px;">
-                             
-                            <label id="profile-account-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.accountNumber">Account Number</label>
-                            <input id="profile-acc-no" type="text" placeholder="Enter Account Number" data-i18n-placeholder="profile.accountNumberPlaceholder" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 16px;">
-                             
-                            <label id="profile-ifsc-label" style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;" data-i18n="profile.ifsc">IFSC Code</label>
-                            <input id="profile-ifsc" type="text" placeholder="Enter IFSC Code" data-i18n-placeholder="profile.ifscPlaceholder" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong);">
+                        " onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px var(--primary-light)'"
+                                onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <div class="card table-container">
+                            <table class="data-table" id="payments-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="payments.workerName">Worker Name</th>
+                                        <th data-i18n="payments.dailyWage">Daily Wage</th>
+                                        <th data-i18n="payments.unpaidDays">Unpaid Days</th>
+                                        <th data-i18n="payments.earned">Earned</th>
+                                        <th data-i18n="payments.paid">Paid</th>
+                                        <th data-i18n="payments.loans">Loans</th>
+                                        <th data-i18n="payments.pending">Pending</th>
+                                        <th class="actions-col" data-i18n="payments.actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payments-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                            <div id="payments-no-results"
+                                style="display:none; text-align:center; padding: 32px; color: var(--text-muted); font-size: 1rem;">&#128269; <span data-i18n="payments.noWorkersSearch">No
+                                    workers found matching your search.</span></div>
                         </div>
                     </div>
-                    <button id="profile-save-btn" class="btn btn-primary" onclick="window.saveProfile()" style="width: 100%;" data-i18n="profile.saveChanges">Save Changes</button>
-                    <div id="profile-status" style="margin-top: 12px; font-size: 0.85rem; text-align: center; display: none;"></div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Modals -->
-
-    <!-- Export Modal -->
-    <div id="export-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="export-modal-title">
-            <button class="close-btn" onclick="window.toggleModal('export-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="export-modal-title" data-i18n="export.title">Export to Excel</h2>
-            <div class="form-group">
-                <label for="export-scope" data-i18n="export.scope">Export Scope</label>
-                <select id="export-scope" class="form-select" onchange="window.handleExportScopeChange()">
-                    <option value="all" selected data-i18n="export.allData">All Data</option>
-                    <option value="date" data-i18n="export.byDate">By Date</option>
-                    <option value="daterange" data-i18n="export.byDateRange">By Date Range</option>
-                    <option value="farm" data-i18n="export.byFarm">By Farm</option>
-                </select>
-            </div>
-            <div class="form-group" id="export-date-group" style="display: none;">
-                <label for="export-date" data-i18n="export.selectDate">Select Date</label>
-                <input type="date" id="export-date" class="form-select">
-            </div>
-            <div class="form-group" id="export-daterange-group" style="display: none;">
-                <div style="display:flex; gap:12px;">
-                    <div style="flex:1;">
-                        <label for="export-date-start" data-i18n="attendance.startDate">Start Date</label>
-                        <input type="date" id="export-date-start" class="form-select">
-                    </div>
-                    <div style="flex:1;">
-                        <label for="export-date-end" data-i18n="attendance.endDate">End Date</label>
-                        <input type="date" id="export-date-end" class="form-select">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" id="export-farm-group" style="display: none;">
-                <label for="export-farm-select" data-i18n="export.selectFarm">Select Farm</label>
-                <select id="export-farm-select" class="form-select">
-                    <!-- Populated dynamically -->
-                </select>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="window.toggleModal('export-modal')" data-i18n="common.cancel">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="window.downloadExcelReport()" data-i18n="export.download">Download .xlsx</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="clear-attendance-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="clear-attendance-modal-title">
-            <button class="close-btn" onclick="window.toggleModal('clear-attendance-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="clear-attendance-modal-title" data-i18n="clearAttendance.title">Save Excel &amp; Delete Attendance</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
-                <span data-i18n="clearAttendance.description">The app will first save an Excel file, and only then delete the attendance you choose.</span>
-            </p>
-            <div class="form-group">
-                <label for="clear-attendance-scope" data-i18n="clearAttendance.scopeLabel">What do you want to delete?</label>
-                <select id="clear-attendance-scope" class="form-select" onchange="window.handleAttendanceClearScopeChange()">
-                    <option value="all" selected data-i18n="clearAttendance.scopeAll">Delete all attendance</option>
-                    <option value="range" data-i18n="clearAttendance.scopeRange">Delete only between two dates</option>
-                </select>
-            </div>
-            <div id="clear-attendance-range-group" style="display:none;">
-                <div class="form-group">
-                    <label for="clear-attendance-start" data-i18n="common.fromDate">From Date</label>
-                    <input type="date" id="clear-attendance-start" class="form-select">
-                </div>
-                <div class="form-group">
-                    <label for="clear-attendance-end" data-i18n="common.toDate">To Date</label>
-                    <input type="date" id="clear-attendance-end" class="form-select">
-                </div>
-            </div>
-            <div style="margin-bottom: 24px; padding: 14px 16px; border-radius: 12px; background: var(--bg-1); border: 1px dashed var(--border); color: var(--text-muted); line-height: 1.6;">
-                <span data-i18n="clearAttendance.excelIncludes">Excel file will include: Date, Worker Name, Farm Name, Present?, Work Type</span>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="window.toggleModal('clear-attendance-modal')" data-i18n="common.cancel">Cancel</button>
-                <button type="button" class="btn" onclick="window.confirmAttendanceClear()" style="background: linear-gradient(135deg, #DC2626, #991B1B); color: white; border: none;" data-i18n="clearAttendance.action">Save Excel &amp; Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="farm-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="farm-modal-title">
-            <button class="close-btn" onclick="window.toggleModal('farm-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="farm-modal-title" data-i18n="farmModal.addTitle">Add New Farm</h2>
-            <form id="add-farm-form">
-                <input type="hidden" id="farm-id" value="">
-                <div class="form-group">
-                    <label for="farm-name" data-i18n="farmModal.farmName">Farm Name</label>
-                    <input type="text" id="farm-name" placeholder="e.g., Green Acres" data-i18n-placeholder="farmModal.farmNamePlaceholder" required>
-                </div>
-                <div class="form-group">
-                    <label for="farm-location" data-i18n="farmModal.locationOptional">Location (Optional)</label>
-                    <input type="text" id="farm-location" placeholder="e.g., Springfield" data-i18n-placeholder="farmModal.locationPlaceholder">
-                </div>
-                <div class="form-actions" style="display: flex; gap: 12px;">
-                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="window.toggleModal('farm-modal')" data-i18n="common.cancel">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 2;" data-i18n="farmModal.saveFarm">Save Farm</button>
-                    <button type="button" id="delete-farm-btn" class="btn" style="background: transparent; color: #DC2626; border: 1px solid #DC2626; display: none; padding: 10px 16px;" onclick="window.deleteFarm()">
-                        <span data-i18n="farmModal.deleteFarm">Delete</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="worker-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="worker-modal-title">
-            <button class="close-btn" onclick="window.toggleModal('worker-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="worker-modal-title" data-i18n="workerModal.addTitle">Add New Worker</h2>
-            <form id="add-worker-form">
-                <input type="hidden" id="worker-id" value="">
-                
-                <div class="form-group">
-                    <label for="worker-name" data-i18n="workerModal.fullName">Worker Full Name</label>
-                    <input type="text" id="worker-name" placeholder="e.g., Jane Doe" data-i18n-placeholder="workerModal.fullNamePlaceholder" required>
-                </div>
-                <div class="form-group">
-                    <label for="worker-role" data-i18n="workerModal.role">Role</label>
-                    <input type="text" id="worker-role" placeholder="e.g., Farm Supervisor" data-i18n-placeholder="workerModal.rolePlaceholder" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="worker-wage" data-i18n="workerModal.dailyWage">Daily Wage (₹)</label>
-                        <input type="number" id="worker-wage" placeholder="0" min="0" step="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="worker-overtime-charge" data-i18n="workerModal.overtimeCharge">Overtime Charge (₹)</label>
-                        <input type="number" id="worker-overtime-charge" placeholder="0" min="0" step="1">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="worker-initial-debt" data-i18n="workerModal.initialDebt">Initial Debt (Rs.)</label>
-                    <input type="number" id="worker-initial-debt" placeholder="0" min="0" step="1" data-i18n-placeholder="workerModal.initialDebtPlaceholder">
-                    <small class="help-text" data-i18n="workerModal.initialDebtHelp">Amount owed to worker from before tracking began.</small>
-                </div>
-
-                <!-- Bank Details Section -->
-                <div style="margin: 20px 0; padding: 16px; background: var(--surface-solid); border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                    <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-strong); display: flex; align-items: center; gap: 8px;">
-                        <span aria-hidden="true">🏦</span> <span data-i18n="workerModal.bankDetails">Bank Details (for Money Transfer)</span>
-                    </h3>
-                    <div class="form-group">
-                        <label for="worker-bank-name" data-i18n="profile.bankName">Bank Name</label>
-                        <input type="text" id="worker-bank-name" placeholder="e.g., State Bank of India" data-i18n-placeholder="workerModal.bankNamePlaceholder">
-                    </div>
-                    <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label for="worker-account-num" data-i18n="profile.accountNumber">Account Number</label>
-                            <input type="text" id="worker-account-num" placeholder="e.g., 1234567890" data-i18n-placeholder="workerModal.accountPlaceholder">
+                </section>
+                <!-- My Profile Section -->
+                <section id="profile" class="view-section">
+                    <header class="section-header">
+                        <div>
+                            <h2 id="profile-section-title"
+                                style="color: var(--text-strong); font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px;"
+                                data-i18n="profile.title">My Profile</h2>
+                            <p id="profile-section-subtitle"
+                                style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 24px;"
+                                data-i18n="profile.subtitle">Manage your login and bank information.</p>
                         </div>
-                        <div class="form-group">
-                            <label for="worker-ifsc" data-i18n="profile.ifsc">IFSC Code</label>
-                            <input type="text" id="worker-ifsc" placeholder="e.g., SBIN0001234" data-i18n-placeholder="workerModal.ifscPlaceholder">
+                    </header>
+                    <div class="card" style="max-width: 500px; margin-top: 24px;">
+                        <div style="margin-bottom: 20px;">
+                            <label id="profile-name-label"
+                                style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                data-i18n="profile.fullName">Full Name</label>
+                            <input id="profile-name" type="text" placeholder="Enter your full name"
+                                data-i18n-placeholder="profile.fullNamePlaceholder"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong);">
+                        </div>
+                        <div style="margin-bottom: 24px;">
+                            <label id="profile-phone-label"
+                                style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                data-i18n="profile.phone">Phone Number</label>
+                            <input id="profile-phone" type="text" placeholder="Enter your phone number"
+                                data-i18n-placeholder="profile.phonePlaceholder"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 24px;">
+                            <label id="profile-language-label"
+                                style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                data-i18n="profile.language">Language</label>
+                            <select id="profile-language" translate="no"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); font-family: inherit; margin-bottom: 24px;">
+                                <option value="en" translate="no">English</option>
+                                <option value="kn" translate="no">Kannada</option>
+                                <option value="hi" translate="no">Hindi</option>
+                            </select>
+
+                            <label id="profile-theme-label"
+                                style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                data-i18n="profile.selectTheme">Select Theme</label>
+                            <select id="profile-theme" onchange="window.setTheme(this.value)"
+                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); font-family: inherit; margin-bottom: 24px;">
+                                <option value="light" data-i18n="menu.lightMode">Light Mode</option>
+                                <option value="dark" data-i18n="menu.darkMode">Dark Mode</option>
+                                <option value="comfort" data-i18n="menu.comfortMode">Comfort Mode</option>
+                                <option value="vibrant" data-i18n="menu.vibrantMode">Vibrant Mode</option>
+                            </select>
+
+                            <div style="padding-top: 16px; border-top: 1px dashed var(--border);">
+                                <p id="profile-bank-title"
+                                    style="font-weight: 700; font-size: 0.9rem; color: var(--primary); margin-bottom: 16px; text-transform: uppercase;"
+                                    data-i18n="profile.bankTransferDetails">Bank Transfer Details</p>
+
+                                <label id="profile-bank-name-label"
+                                    style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                    data-i18n="profile.bankName">Bank Name</label>
+                                <input id="profile-bank-name" type="text" placeholder="e.g., HDFC Bank"
+                                    data-i18n-placeholder="profile.bankNamePlaceholder"
+                                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 16px;">
+
+                                <label id="profile-account-label"
+                                    style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                    data-i18n="profile.accountNumber">Account Number</label>
+                                <input id="profile-acc-no" type="text" placeholder="Enter Account Number"
+                                    data-i18n-placeholder="profile.accountNumberPlaceholder"
+                                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong); margin-bottom: 16px;">
+
+                                <label id="profile-ifsc-label"
+                                    style="display: block; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;"
+                                    data-i18n="profile.ifsc">IFSC Code</label>
+                                <input id="profile-ifsc" type="text" placeholder="Enter IFSC Code"
+                                    data-i18n-placeholder="profile.ifscPlaceholder"
+                                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-strong);">
+                            </div>
+                        </div>
+                        <button id="profile-save-btn" class="btn btn-primary" onclick="window.saveProfile()"
+                            style="width: 100%;" data-i18n="profile.saveChanges">Save Changes</button>
+                        <div id="profile-status"
+                            style="margin-top: 12px; font-size: 0.85rem; text-align: center; display: none;"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Modals -->
+
+        <!-- Export Modal -->
+        <div id="export-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="export-modal-title">
+                <button class="close-btn" onclick="window.toggleModal('export-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="export-modal-title" data-i18n="export.title">Export to Excel</h2>
+                <div class="form-group">
+                    <label for="export-scope" data-i18n="export.scope">Export Scope</label>
+                    <select id="export-scope" class="form-select" onchange="window.handleExportScopeChange()">
+                        <option value="all" selected data-i18n="export.allData">All Data</option>
+                        <option value="date" data-i18n="export.byDate">By Date</option>
+                        <option value="daterange" data-i18n="export.byDateRange">By Date Range</option>
+                        <option value="farm" data-i18n="export.byFarm">By Farm</option>
+                    </select>
+                </div>
+                <div class="form-group" id="export-date-group" style="display: none;">
+                    <label for="export-date" data-i18n="export.selectDate">Select Date</label>
+                    <input type="date" id="export-date" class="form-select">
+                </div>
+                <div class="form-group" id="export-daterange-group" style="display: none;">
+                    <div style="display:flex; gap:12px;">
+                        <div style="flex:1;">
+                            <label for="export-date-start" data-i18n="attendance.startDate">Start Date</label>
+                            <input type="date" id="export-date-start" class="form-select">
+                        </div>
+                        <div style="flex:1;">
+                            <label for="export-date-end" data-i18n="attendance.endDate">End Date</label>
+                            <input type="date" id="export-date-end" class="form-select">
                         </div>
                     </div>
                 </div>
-                
-                <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
-
-                
-                <div class="form-actions" style="display: flex; gap: 12px; align-items: center; margin-top: 24px;">
-                    <button type="button" class="btn btn-secondary" onclick="window.toggleModal('worker-modal')" data-i18n="common.cancel">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 1;" data-i18n="workerModal.saveWorker">Save Worker</button>
-                    <button type="button" id="delete-worker-btn" class="btn" style="background: transparent; color: #DC2626; border: 1px solid #DC2626; display: none; padding: 10px 16px;" onclick="window.deleteWorker()">
-                        <span data-i18n="common.delete">Delete</span>
-                    </button>
+                <div class="form-group" id="export-farm-group" style="display: none;">
+                    <label for="export-farm-select" data-i18n="export.selectFarm">Select Farm</label>
+                    <select id="export-farm-select" class="form-select">
+                        <!-- Populated dynamically -->
+                    </select>
                 </div>
-            </form>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.toggleModal('export-modal')"
+                        data-i18n="common.cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="window.downloadExcelReport()"
+                        data-i18n="export.download">Download .xlsx</button>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id="payment-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="payment-modal-title">
-            <button class="close-btn" onclick="window.toggleModal('payment-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="payment-modal-title" data-i18n="paymentModal.title">Settle Payments</h2>
-            <form id="add-payment-form">
-                <input type="hidden" id="payment-worker-id" value="">
-                
-                <div style="margin-bottom: 24px; padding: 20px; background: #F8FAFC; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <p style="margin:0; color:var(--text-muted); font-size:1rem;"><span data-i18n="paymentModal.currentPaid">Current Total Paid</span>: <strong id="current-paid-display" class="text-success">₹0</strong></p>
-                    <p style="margin:8px 0 0 0; color:var(--text-muted); font-size:1rem;"><span data-i18n="paymentModal.currentLoan">Current Loan balance</span>: <strong id="current-loan-display" class="text-warning">₹0</strong></p>
-                </div>
-
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="payment-add-paid" data-i18n="paymentModal.payAmount">+ Pay Amount (₹)</label>
-                        <input type="number" id="payment-add-paid" placeholder="0" min="0" step="1">
-                        <small class="text-muted" style="display:block; margin-top:4px;" data-i18n="paymentModal.payAmountHelp">Adds to Total Paid.</small>
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="payment-add-loan" data-i18n="paymentModal.giveLoan">+ Give Loan (₹)</label>
-                        <input type="number" id="payment-add-loan" placeholder="0" min="0" step="1">
-                        <small class="text-muted" style="display:block; margin-top:4px;" data-i18n="paymentModal.giveLoanHelp">Adds to Loan balance.</small>
-                    </div>
-                </div>
+        <div id="clear-attendance-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="clear-attendance-modal-title">
+                <button class="close-btn" onclick="window.toggleModal('clear-attendance-modal')"
+                    aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="clear-attendance-modal-title" data-i18n="clearAttendance.title">Save Excel &amp; Delete
+                    Attendance</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+                    <span data-i18n="clearAttendance.description">The app will first save an Excel file, and only then
+                        delete the attendance you choose.</span>
+                </p>
                 <div class="form-group">
-                    <label for="payment-set-loan" data-i18n="paymentModal.setLoan">Set Loan Balance (Rs.)</label>
-                    <input type="number" id="payment-set-loan" placeholder="Leave blank to keep current balance" min="0" step="1" data-i18n-placeholder="paymentModal.setLoanPlaceholder">
-                    <small class="text-muted" style="display:block; margin-top:4px;" data-i18n="paymentModal.setLoanHelp">Optional. If filled, this replaces the current loan balance exactly.</small>
+                    <label for="clear-attendance-scope" data-i18n="clearAttendance.scopeLabel">What do you want to
+                        delete?</label>
+                    <select id="clear-attendance-scope" class="form-select"
+                        onchange="window.handleAttendanceClearScopeChange()">
+                        <option value="all" data-i18n="clearAttendance.scopeAll">Delete all attendance</option>
+                        <option value="range" selected data-i18n="clearAttendance.scopeRange">Delete only between two
+                            dates</option>
+                    </select>
                 </div>
-                
-                <div style="margin-bottom: 24px; padding: 12px; background: var(--bg-1); border-radius: 12px; border: 1px dashed var(--border);">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="payment-settle-attendance" style="width: 18px; height: 18px;" onchange="document.getElementById('payment-settle-date-container').style.display = this.checked ? 'block' : 'none'">
-                        <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-strong);" data-i18n="paymentModal.markPeriodPaid">Mark specific period as Paid?</span>
+                <div id="clear-attendance-range-group">
+                    <div class="form-group">
+                        <label for="clear-attendance-start" data-i18n="common.fromDate">From Date</label>
+                        <input type="date" id="clear-attendance-start" class="form-select">
+                    </div>
+                    <div class="form-group">
+                        <label for="clear-attendance-end" data-i18n="common.toDate">To Date</label>
+                        <input type="date" id="clear-attendance-end" class="form-select">
+                    </div>
+                </div>
+                <!-- Farm selector (All Farms or specific) -->
+                <div class="form-group" style="margin-top: 4px;">
+                    <label for="clear-attendance-farm" style="font-weight: 600;">Farm</label>
+                    <select id="clear-attendance-farm" class="form-select">
+                        <option value="all">🌾 All Farms</option>
+                        <!-- Populated dynamically by openAttendanceClearModal -->
+                    </select>
+                </div>
+                <!-- Also delete payments checkbox -->
+                <div style="margin-bottom: 20px; padding: 14px 16px; border-radius: 12px; background: var(--bg-1); border: 1px solid var(--border);">
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                        <input type="checkbox" id="clear-attendance-also-payments" checked
+                            style="width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: var(--primary);">
+                        <div>
+                            <span style="font-weight: 700; color: var(--text-strong); display: block; margin-bottom: 4px;">Also delete payments for this date range</span>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Payment records logged within the selected dates will be removed and worker balances will be adjusted accordingly.</span>
+                        </div>
                     </label>
-                    <div id="payment-settle-date-container" style="display: none; margin-top: 12px; padding-left: 28px;">
-                        <div style="display:flex; gap:12px;">
-                            <div style="flex:1;">
-                                <label style="font-size: 0.8rem; color: var(--text-muted);" data-i18n="common.fromDate">From Date</label>
-                                <input type="date" id="payment-settle-start" class="form-select" style="margin-top: 4px;">
-                            </div>
-                            <div style="flex:1;">
-                                <label style="font-size: 0.8rem; color: var(--text-muted);" data-i18n="common.toDate">To Date</label>
-                                <input type="date" id="payment-settle-end" class="form-select" style="margin-top: 4px;">
-                            </div>
-                        </div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
-                            <span data-i18n="paymentModal.periodNote">Attendance logged within this date range will be permanently marked as PAID and deducted from pending balance.</span>
-                        </p>
-                    </div>
                 </div>
-
-                <div class="form-actions" style="flex-direction: column; gap: 12px;">
-                    <div style="display:flex; gap: 12px; width:100%;">
-                        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="window.toggleModal('payment-modal')" data-i18n="common.cancel">Cancel</button>
-                        <button type="submit" class="btn btn-primary" style="flex:1; padding: 14px;" data-i18n="paymentModal.confirm">Confirm Payment &amp; Sync</button>
-                    </div>
-                    <button type="button" id="settle-btn" style="width:100%; padding:14px; background: linear-gradient(135deg,#DC2626,#991B1B); color:white; border:none; border-radius:var(--radius-pill); font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer;" onclick="window.settleWorkerPayment(document.getElementById('payment-worker-id').value)" data-i18n="paymentModal.fullySettled">✔ Mark as Fully Settled (Reset Balance)</button>
+                <div
+                    style="margin-bottom: 24px; padding: 14px 16px; border-radius: 12px; background: var(--bg-1); border: 1px dashed var(--border); color: var(--text-muted); line-height: 1.6;">
+                    <strong style="display: block; margin-bottom: 4px; color: var(--text-body);">⚠️ This will permanently delete from Firestore:</strong>
+                    <span>Attendance records, payment history entries, and Excel export for the selected range.</span>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="breakdown-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-labelledby="breakdown-modal-title" style="max-width: 700px;">
-            <button class="close-btn" onclick="window.toggleModal('breakdown-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 id="breakdown-modal-title" data-i18n="breakdown.title">Farm Wage Breakdown</h2>
-            
-            <div id="breakdown-content" style="margin-bottom: 24px; font-size: 1.1rem; color: var(--text-strong); line-height: 1.8;">
-                <!-- Populated dynamically -->
-            </div>
-
-            <div class="form-actions" style="margin-top: 24px;">
-                <button type="button" class="btn btn-secondary" onclick="window.toggleModal('breakdown-modal')" style="width: 100%;" data-i18n="common.close">Close</button>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="window.toggleModal('clear-attendance-modal')" data-i18n="common.cancel">Cancel</button>
+                    <button type="button" class="btn" onclick="window.confirmAttendanceClear()"
+                        style="background: linear-gradient(135deg, #DC2626, #991B1B); color: white; border: none;"
+                        data-i18n="clearAttendance.action">Save Excel &amp; Delete</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Admin Panel Modal -->
-    <div id="admin-modal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content admin-modal-content" role="dialog">
-            <button class="close-btn" onclick="window.toggleModal('admin-modal')" aria-label="Close modal" data-i18n-aria-label="common.close">&times;</button>
-            <h2 style="margin-bottom: 8px;">⚙️ <span data-i18n="admin.title">Admin Panel</span></h2>
-            <p style="color:var(--text-muted); margin-bottom: 24px;" data-i18n="admin.subtitle">Manage users who can access Chandragiri Estate.</p>
-            
-            <div class="admin-panel-layout">
-                <div class="admin-panel-primary">
-                    <div class="admin-panel-card">
-                        <h3 class="admin-panel-title" data-i18n="admin.usersAccess">Users and Access</h3>
-                        <div id="admin-user-list" class="admin-user-list"></div>
+        <div id="farm-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="farm-modal-title">
+                <button class="close-btn" onclick="window.toggleModal('farm-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="farm-modal-title" data-i18n="farmModal.addTitle">Add New Farm</h2>
+                <form id="add-farm-form">
+                    <input type="hidden" id="farm-id" value="">
+                    <div class="form-group">
+                        <label for="farm-name" data-i18n="farmModal.farmName">Farm Name</label>
+                        <input type="text" id="farm-name" placeholder="e.g., Green Acres"
+                            data-i18n-placeholder="farmModal.farmNamePlaceholder" required>
                     </div>
-                </div>
-                <!-- Right Side: User Form -->
-                <div class="admin-panel-side">
-                    <div class="admin-panel-card" style="background: var(--surface); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border);">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-                            <h3 id="admin-form-title" style="margin:0; font-size: 1.1rem;">+ Add New User</h3>
-                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.clearUserForm()" data-i18n="admin.addNewUser">Add New User</button>
+                    <div class="form-group">
+                        <label for="farm-location" data-i18n="farmModal.locationOptional">Location (Optional)</label>
+                        <input type="text" id="farm-location" placeholder="e.g., Springfield"
+                            data-i18n-placeholder="farmModal.locationPlaceholder">
+                    </div>
+                    <div class="form-actions" style="display: flex; gap: 12px;">
+                        <button type="button" class="btn btn-secondary" style="flex: 1;"
+                            onclick="window.toggleModal('farm-modal')" data-i18n="common.cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 2;"
+                            data-i18n="farmModal.saveFarm">Save Farm</button>
+                        <button type="button" id="delete-farm-btn" class="btn"
+                            style="background: transparent; color: #DC2626; border: 1px solid #DC2626; display: none; padding: 10px 16px;"
+                            onclick="window.deleteFarm()">
+                            <span data-i18n="farmModal.deleteFarm">Delete</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="worker-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="worker-modal-title">
+                <button class="close-btn" onclick="window.toggleModal('worker-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="worker-modal-title" data-i18n="workerModal.addTitle">Add New Worker</h2>
+                <form id="add-worker-form">
+                    <input type="hidden" id="worker-id" value="">
+
+                    <div class="form-group">
+                        <label for="worker-name" data-i18n="workerModal.fullName">Worker Full Name</label>
+                        <input type="text" id="worker-name" placeholder="e.g., Jane Doe"
+                            data-i18n-placeholder="workerModal.fullNamePlaceholder" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="worker-role" data-i18n="workerModal.role">Role</label>
+                        <input type="text" id="worker-role" placeholder="e.g., Farm Supervisor"
+                            data-i18n-placeholder="workerModal.rolePlaceholder" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="worker-wage" data-i18n="workerModal.dailyWage">Daily Wage (Rs.)</label>
+                            <input type="number" id="worker-wage" placeholder="0" min="0" step="1" required>
                         </div>
-                <div class="admin-form-row">
-                    <input id="new-username" type="text" placeholder="Username" data-i18n-placeholder="admin.usernamePlaceholder" class="admin-form-input">
-                    <input id="new-password" type="password" placeholder="Password" data-i18n-placeholder="admin.passwordPlaceholder" class="admin-form-input">
-                </div>
-                <div class="admin-toggle-row">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="new-is-admin" style="width:18px; height:18px; cursor:pointer;">
-                        <label for="new-is-admin" style="color: var(--text-body); cursor:pointer; font-size: 0.95rem;" data-i18n="admin.adminAccess">Admin Access</label>
+                        <div class="form-group">
+                            <label for="worker-overtime-charge" data-i18n="workerModal.overtimeCharge">Overtime Charge (Rs.)</label>
+                            <input type="number" id="worker-overtime-charge" placeholder="0" min="0" step="1">
+                        </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="new-is-guest" style="width:18px; height:18px; cursor:pointer;">
-                        <label for="new-is-guest" style="color: var(--text-warning); cursor:pointer; font-size: 0.95rem; font-weight:700;" data-i18n="admin.guestAccess">Guest (5hr access)</label>
+                    <div class="form-group">
+                        <label for="worker-initial-debt" data-i18n="workerModal.initialDebt">Opening Balance
+                            (Rs.)</label>
+                        <input type="number" id="worker-initial-debt" placeholder="0" min="0" step="1"
+                            data-i18n-placeholder="workerModal.initialDebtPlaceholder">
+                        <small class="help-text" data-i18n="workerModal.initialDebtHelp">Amount owed to worker from
+                            before tracking began.</small>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="new-is-demo" style="width:18px; height:18px; cursor:pointer;">
-                        <label for="new-is-demo" style="color: var(--primary); cursor:pointer; font-size: 0.95rem; font-weight:700;" data-i18n="admin.demoAccount">Demo Account</label>
+                    <div class="form-group">
+                        <label for="worker-phone" data-i18n="profile.phone">Phone Number</label>
+                        <input type="text" id="worker-phone" placeholder="Enter your phone number"
+                            data-i18n-placeholder="profile.phonePlaceholder">
                     </div>
-                </div>
 
-                <div id="new-user-perms" class="admin-perms-box" style="margin-top: 16px;">
-                    <p class="admin-perms-title" data-i18n="admin.allowedFacilities">Allowed Facilities</p>
-                    <div class="admin-permissions-grid">
-                        <label class="admin-checkline"><input type="checkbox" id="p-farms" checked> <span data-i18n="nav.farms">Farms</span></label>
-                        <label class="admin-checkline"><input type="checkbox" id="p-workers" checked> <span data-i18n="nav.workers">Workers</span></label>
-                        <label class="admin-checkline"><input type="checkbox" id="p-attendance" checked> <span data-i18n="nav.attendance">Attendance</span></label>
-                        <label class="admin-checkline"><input type="checkbox" id="p-payments" checked> <span data-i18n="nav.payments">Payments</span></label>
-                        <label class="admin-checkline"><input type="checkbox" id="p-edit" checked> <span data-i18n="admin.canEdit">Can Edit</span></label>
-                        <label class="admin-checkline"><input type="checkbox" id="p-backup"> <span data-i18n="admin.backupTools">Backup Tools</span></label>
-                    </div>
-                </div>
-                    </div>
-                </div>
-                <button id="admin-user-submit" onclick="window.addNewUser()" class="btn btn-primary" style="width: 100%; margin-top: 16px; margin-bottom: 24px;">Add User</button>
-
-                <!-- Weather Settings & Activity Logs (Side-by-side) -->
-                <div class="admin-weather-activity-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; border-top: 1px dashed var(--border); padding-top: 24px;">
-                    <!-- Weather Settings -->
-                    <div class="admin-panel-card" style="margin: 0;">
-                        <h3 style="margin-bottom: 12px; font-size: 1.1rem;">🌦️ <span data-i18n="weather.location">Weather Location</span></h3>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;" data-i18n="weather.locationHelp">Set coordinates for your estate to get accurate weather data.</p>
-                        <div class="admin-form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-                            <div style="flex: 1;">
-                                <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" data-i18n="weather.latitude">Latitude</label>
-                                <input id="admin-weather-lat" type="number" step="0.0001" placeholder="e.g., 14.6191" data-i18n-placeholder="weather.latitudePlaceholder" class="admin-form-input" style="width: 100%;">
+                    <!-- Bank Details Section -->
+                    <div
+                        style="margin: 20px 0; padding: 16px; background: var(--surface-solid); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <h3
+                            style="font-size: 1rem; margin-bottom: 12px; color: var(--text-strong); display: flex; align-items: center; gap: 8px;">
+                            <span data-i18n="workerModal.bankDetails">Bank Details (for Money Transfer)</span>
+                        </h3>
+                        <div class="form-group">
+                            <label for="worker-bank-name" data-i18n="profile.bankName">Bank Name</label>
+                            <input type="text" id="worker-bank-name" placeholder="e.g., State Bank of India"
+                                data-i18n-placeholder="workerModal.bankNamePlaceholder">
+                        </div>
+                        <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="form-group">
+                                <label for="worker-account-num" data-i18n="profile.accountNumber">Account Number</label>
+                                <input type="text" id="worker-account-num" placeholder="e.g., 1234567890"
+                                    data-i18n-placeholder="workerModal.accountPlaceholder">
                             </div>
-                            <div style="flex: 1;">
-                                <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" data-i18n="weather.longitude">Longitude</label>
-                                <input id="admin-weather-lon" type="number" step="0.0001" placeholder="e.g., 74.8441" data-i18n-placeholder="weather.longitudePlaceholder" class="admin-form-input" style="width: 100%;">
+                            <div class="form-group">
+                                <label for="worker-ifsc" data-i18n="profile.ifsc">IFSC Code</label>
+                                <input type="text" id="worker-ifsc" placeholder="e.g., SBIN0001234"
+                                    data-i18n-placeholder="workerModal.ifscPlaceholder">
                             </div>
                         </div>
-                        <div class="form-group" style="margin-bottom: 16px;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" data-i18n="common.displayName">Display Name</label>
-                            <input id="admin-weather-location-name" type="text" placeholder="e.g., Chandragiri Estate" data-i18n-placeholder="weather.locationNamePlaceholder" class="admin-form-input" style="width: 100%;">
-                        </div>
-                        <button onclick="window.saveWeatherConfig()" class="btn btn-secondary" style="width: 100%; font-size: 0.9rem;" data-i18n="weather.updateLocation">Update Weather Location</button>
                     </div>
 
-                    <!-- Activity Logs -->
-                    <div class="admin-panel-card admin-activity-section" style="margin: 0;">
-                        <h3 style="margin-bottom: 12px; font-size: 1.1rem;" data-i18n="admin.recentActivity">Activity Log</h3>
-                        <div id="admin-activity-log" class="admin-activity-log" style="background: var(--surface-solid); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; font-size: 0.85rem; height: 180px; overflow-y: auto;">
-                            <!-- Logs go here -->
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
+
+
+                    <div class="form-actions" style="display: flex; gap: 12px; align-items: center; margin-top: 24px;">
+                        <button type="button" class="btn btn-secondary" onclick="window.toggleModal('worker-modal')"
+                            data-i18n="common.cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;"
+                            data-i18n="workerModal.saveWorker">Save Worker</button>
+                        <button type="button" id="delete-worker-btn" class="btn"
+                            style="background: transparent; color: #DC2626; border: 1px solid #DC2626; display: none; padding: 10px 16px;"
+                            onclick="window.deleteWorker()">
+                            <span data-i18n="common.delete">Delete</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="payment-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="payment-modal-title">
+                <button class="close-btn" onclick="window.toggleModal('payment-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="payment-modal-title" data-i18n="paymentModal.title">Settle Payments</h2>
+                <form id="add-payment-form">
+                    <input type="hidden" id="payment-worker-id" value="">
+
+                    <div
+                        style="margin-bottom: 24px; padding: 20px; background: #F8FAFC; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <p style="margin:0; color:var(--text-muted); font-size:1rem;"><span
+                                data-i18n="paymentModal.currentPaid">Current Total Paid</span>: <strong
+                                id="current-paid-display"
+                                class="text-success">&#8377;0</strong></p>
+                        <p style="margin:8px 0 0 0; color:var(--text-muted); font-size:1rem;"><span
+                                data-i18n="paymentModal.currentLoan">Remaining amount of loan</span>: <strong
+                                id="current-loan-display"
+                                class="text-warning">&#8377;0</strong></p>
+                    </div>
+
+                    <div class="form-row" style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label for="payment-add-paid" data-i18n="paymentModal.payAmount">+ Pay Amount (Rs.)</label>
+                            <input type="number" id="payment-add-paid" placeholder="0" min="0" step="1">
+                            <small class="text-muted" style="display:block; margin-top:4px;"
+                                data-i18n="paymentModal.payAmountHelp">Adds to Total Paid.</small>
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label for="payment-add-loan" data-i18n="paymentModal.giveLoan">+ Take Loan (Rs.)</label>
+                            <input type="number" id="payment-add-loan" placeholder="0" min="0" step="1">
+                            <small class="text-muted" style="display:block; margin-top:4px;"
+                                data-i18n="paymentModal.giveLoanHelp">Adds to Loan balance.</small>
                         </div>
                     </div>
+                    <div class="form-row" id="payment-deduct-loan-wrapper" style="display:flex; gap:16px; margin-top: 16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label for="payment-deduct-loan" data-i18n="paymentModal.deductLoan">- Deduct from Loan (Rs.)</label>
+                            <input type="number" id="payment-deduct-loan" placeholder="0" min="0" step="1">
+                            <small class="text-muted" style="display:block; margin-top:4px;"
+                                data-i18n="paymentModal.deductLoanHelp">Reduces Loan balance.</small>
+                        </div>
+                    </div>
+                    <div class="form-actions" style="display: flex; gap: 12px;">
+                        <button type="button" class="btn btn-secondary" style="flex:1;"
+                            onclick="window.toggleModal('payment-modal')" data-i18n="common.cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="flex:2; padding: 14px;"
+                            data-i18n="paymentModal.confirm">Confirm Payment &amp; Sync</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="breakdown-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="breakdown-modal-title" style="max-width: 700px;">
+                <button class="close-btn" onclick="window.toggleModal('breakdown-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 id="breakdown-modal-title" data-i18n="breakdown.title">Farm Wage Breakdown</h2>
+
+                <div id="breakdown-content"
+                    style="margin-bottom: 24px; font-size: 1.1rem; color: var(--text-strong); line-height: 1.8;">
+                    <!-- Populated dynamically -->
                 </div>
+
+                <div class="form-actions" style="margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary" onclick="window.toggleModal('breakdown-modal')"
+                        style="width: 100%;" data-i18n="common.close">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel Modal -->
+        <div id="admin-modal" class="modal-overlay" aria-hidden="true">
+            <div class="modal-content admin-modal-content" role="dialog">
+                <button class="close-btn" onclick="window.toggleModal('admin-modal')" aria-label="Close modal"
+                    data-i18n-aria-label="common.close">&times;</button>
+                <h2 style="margin-bottom: 8px;"><span
+                        data-i18n="admin.title">Admin Panel</span></h2>
+                <p style="color:var(--text-muted); margin-bottom: 24px;" data-i18n="admin.subtitle">Manage users who can
+                    access Chandragiri Estate.</p>
+
+                <div class="admin-panel-layout">
+                    <div class="admin-panel-primary">
+                        <div class="admin-panel-card">
+                            <h3 class="admin-panel-title" data-i18n="admin.usersAccess">Users and Access</h3>
+                            <div id="admin-user-list" class="admin-user-list"></div>
+                        </div>
+                    </div>
+                    <!-- Right Side: User Form -->
+                    <div class="admin-panel-side">
+                        <div class="admin-panel-card"
+                            style="background: var(--surface); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border);">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                <h3 id="admin-form-title" style="margin:0; font-size: 1.15rem;">+ Add / Edit User</h3>
+                                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                                    onclick="window.clearUserForm()" data-i18n="admin.addNewUser">Reset Form</button>
+                            </div>
+
+                            <!-- Account Details -->
+                            <div class="admin-form-section" style="margin-bottom: 20px;">
+                                <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;"
+                                    data-i18n="admin.accountDetails">Account Identity</p>
+                                <div class="admin-form-row">
+                                    <input id="new-username" type="text" placeholder="Username"
+                                        data-i18n-placeholder="admin.usernamePlaceholder" class="admin-form-input">
+                                    <input id="new-password" type="password" placeholder="Password"
+                                        data-i18n-placeholder="admin.passwordPlaceholder" class="admin-form-input">
+                                </div>
+                            </div>
+
+                            <!-- Preferences -->
+                            <div class="admin-form-section" style="margin-bottom: 20px;">
+                                <p
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">
+                                    Allowed Themes</p>
+                                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                    <label
+                                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-body); font-size: 0.9rem;">
+                                        <input type="checkbox" id="allow-theme-light" class="theme-allow-chk" checked> Light
+                                    </label>
+                                    <label
+                                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-body); font-size: 0.9rem;">
+                                        <input type="checkbox" id="allow-theme-dark" class="theme-allow-chk" checked> Dark
+                                    </label>
+                                    <label
+                                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-body); font-size: 0.9rem;">
+                                        <input type="checkbox" id="allow-theme-vibrant" class="theme-allow-chk" checked> Vibrant
+                                    </label>
+                                    <label
+                                        style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-body); font-size: 0.9rem;">
+                                        <input type="checkbox" id="allow-theme-comfort" class="theme-allow-chk" checked> Comfort
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Role Configuration -->
+                            <div class="admin-form-section"
+                                style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed var(--border);">
+                                <p
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">
+                                    Role Configuration</p>
+                                <div class="admin-toggle-row" style="display: flex; flex-direction: column; gap: 14px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" id="new-is-admin"
+                                            style="width:18px; height:18px; cursor:pointer;">
+                                        <label for="new-is-admin"
+                                            style="color: var(--text-body); cursor:pointer; font-size: 0.95rem; font-weight: 600;"
+                                            data-i18n="admin.adminAccess">Full Administrator Access</label>
+                                    </div>
+                                    <div
+                                        style="display: flex; flex-direction: column; gap: 8px; background: var(--surface-hover); padding: 12px; border-radius: var(--radius-sm);">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="checkbox" id="new-is-guest"
+                                                onchange="document.getElementById('guest-duration-config').style.display = this.checked ? 'flex' : 'none';"
+                                                style="width:18px; height:18px; cursor:pointer;">
+                                            <label for="new-is-guest"
+                                                style="color: var(--text-warning); cursor:pointer; font-size: 0.95rem; font-weight:700;">Time-Bound
+                                                Guest Access</label>
+                                        </div>
+                                        <div id="guest-duration-config"
+                                            style="display: none; align-items: center; gap: 8px; margin-left: 26px; flex-wrap: wrap;">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="number" id="guest-duration-val" value="5" min="1"
+                                                    class="admin-form-input"
+                                                    style="width: 70px; padding: 6px 10px; flex: none;">
+                                                <select id="guest-duration-unit" class="admin-form-input"
+                                                    style="width: 100px; padding: 6px 10px; flex: none; cursor: pointer;">
+                                                    <option value="hours">Hours</option>
+                                                    <option value="days">Days</option>
+                                                </select>
+                                            </div>
+                                            <label
+                                                style="font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer; color: var(--text-muted); margin-top: 4px;">
+                                                <input type="checkbox" id="guest-global-access"> <span
+                                                    style="font-weight: 500;">Allow Global Database Connection</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" id="new-is-demo"
+                                            style="width:18px; height:18px; cursor:pointer;">
+                                        <label for="new-is-demo"
+                                            style="color: var(--primary); cursor:pointer; font-size: 0.95rem; font-weight:700;"
+                                            data-i18n="admin.demoAccount">Safe Demo Account</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Permissions Grid -->
+                            <div id="new-user-perms" class="admin-perms-box" style="margin-top: 16px;">
+                                <p class="admin-perms-title"
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;"
+                                    data-i18n="admin.allowedFacilities">Allowed Facilities</p>
+                                <div class="admin-permissions-grid">
+                                    <label class="admin-checkline"><input type="checkbox" id="p-farms" checked> <span
+                                            data-i18n="nav.farms">Farms</span></label>
+                                    <label class="admin-checkline"><input type="checkbox" id="p-workers" checked> <span
+                                            data-i18n="nav.workers">Workers</span></label>
+                                    <label class="admin-checkline"><input type="checkbox" id="p-attendance" checked>
+                                        <span data-i18n="nav.attendance">Attendance</span></label>
+                                    <label class="admin-checkline"><input type="checkbox" id="p-payments" checked> <span
+                                            data-i18n="nav.payments">Payments</span></label>
+                                    <label class="admin-checkline"><input type="checkbox" id="p-edit" checked> <span
+                                            data-i18n="admin.canEdit">Can Edit</span></label>
+                                    <label class="admin-checkline"><input type="checkbox" id="p-backup"> <span
+                                            data-i18n="admin.backupTools">Backup Tools</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="admin-user-submit" onclick="window.addNewUser()" class="btn btn-primary"
+                        style="width: 100%; margin-top: 16px; margin-bottom: 24px; font-size: 1.05rem; padding: 12px;">Save
+                        Profile</button>
+
+                    <!-- Weather Settings & Activity Logs (Side-by-side) -->
+                    <div class="admin-weather-activity-grid"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; border-top: 1px dashed var(--border); padding-top: 24px;">
+                        <!-- Weather Settings -->
+                        <div class="admin-panel-card" style="margin: 0;">
+                            <h3 style="margin-bottom: 12px; font-size: 1.1rem;"><span
+                                    data-i18n="weather.location">Weather Location</span></h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;"
+                                data-i18n="weather.locationHelp">Set coordinates for your estate to get accurate weather
+                                data.</p>
+                            <div class="admin-form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                <div style="flex: 1;">
+                                    <label
+                                        style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;"
+                                        data-i18n="weather.latitude">Latitude</label>
+                                    <input id="admin-weather-lat" type="number" step="0.0001"
+                                        placeholder="e.g., 14.6191" data-i18n-placeholder="weather.latitudePlaceholder"
+                                        class="admin-form-input" style="width: 100%;">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label
+                                        style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;"
+                                        data-i18n="weather.longitude">Longitude</label>
+                                    <input id="admin-weather-lon" type="number" step="0.0001"
+                                        placeholder="e.g., 74.8441" data-i18n-placeholder="weather.longitudePlaceholder"
+                                        class="admin-form-input" style="width: 100%;">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 16px;">
+                                <label
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;"
+                                    data-i18n="common.displayName">Display Name</label>
+                                <input id="admin-weather-location-name" type="text"
+                                    placeholder="e.g., Chandragiri Estate"
+                                    data-i18n-placeholder="weather.locationNamePlaceholder" class="admin-form-input"
+                                    style="width: 100%;">
+                            </div>
+                            <button onclick="window.saveWeatherConfig()" class="btn btn-secondary"
+                                style="width: 100%; font-size: 0.9rem;" data-i18n="weather.updateLocation">Update
+                                Weather Location</button>
+                        </div>
+
+                        <!-- Activity Logs -->
+                        <div class="admin-panel-card admin-activity-section" style="margin: 0;">
+                            <h3 style="margin-bottom: 12px; font-size: 1.1rem;" data-i18n="admin.recentActivity">
+                                Activity Log</h3>
+                            <div id="admin-activity-log" class="admin-activity-log"
+                                style="background: var(--surface-solid); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; font-size: 0.85rem; height: 180px; overflow-y: auto;">
+                                <!-- Logs go here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -790,63 +1137,21 @@
 
     <div id="user-delete-toast-stack" class="undo-toast-stack" aria-live="polite" aria-atomic="false"></div>
 
-    <!-- Chatbot UI -->
-    <button id="chatbot-fab" onclick="window.toggleBotPanel()" style="
-        position: fixed; bottom: 24px; right: 24px; z-index: 1000;
-        width: 60px; height: 60px; border-radius: 30px;
-        background: linear-gradient(135deg, #10B981, #059669);
-        border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        transition: transform 0.2s;
-    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Farm Assistant" data-i18n-title="bot.title">🤖</button>
-
-    <div id="bot-panel" style="
-        position: fixed; bottom: 90px; right: 24px; z-index: 1000;
-        width: min(350px, calc(100vw - 32px)); height: 500px; max-height: 80vh;
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius-md); box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        display: none; flex-direction: column; overflow: hidden;
-    ">
-        <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center;">
-            <strong style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">🤖 <span data-i18n="bot.title">Farm Assistant</span></strong>
-            <button onclick="window.toggleBotPanel()" style="background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; line-height: 1;" aria-label="Close" data-i18n-aria-label="common.close">&times;</button>
-        </div>
-        <div id="bot-messages" style="flex: 1; padding: 16px; overflow-y: auto; background: var(--bg-1); display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
-            <div style="background: var(--surface-solid); border: 1px solid var(--border); padding: 10px 14px; border-radius: 12px 12px 12px 0; color: var(--text-strong); align-self: flex-start; max-width: 85%;">
-                <span data-i18n="bot.intro">Hi there! I can answer offline questions from the data saved in this app, and I can also try simple live market prices when internet is available.</span><br><br>
-                <span data-i18n="bot.tryAsking">Try asking in English:</span><br>
-                <em data-i18n="bot.examplePending">pending pay for Anna</em><br>
-                <em data-i18n="bot.examplePrice">arecanut price in Sirsi</em><br>
-                <em data-i18n="bot.exampleBank">bank details for John Doe</em><br>
-                <em data-i18n="bot.exampleWorkers">workers at Sunny Valley yesterday</em><br>
-                <em data-i18n="bot.exampleAttendance">attendance summary for last 7 days</em>
-            </div>
-        </div>
-        <div style="padding: 12px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 8px;">
-            <input type="text" id="bot-input" placeholder="Ask about pay, attendance, workers, or live market prices..." data-i18n-placeholder="bot.inputPlaceholder" style="
-                flex: 1; padding: 10px 14px; border: 1px solid var(--border);
-                border-radius: 20px; background: var(--bg-1); color: var(--text-strong);
-                font-family: inherit; outline: none;
-            " onkeydown="if(event.key==='Enter') window.sendBotMessage()">
-            <button onclick="window.sendBotMessage()" style="
-                background: var(--primary); color: white; border: none;
-                width: 40px; height: 40px; border-radius: 20px;
-                cursor: pointer; display: flex; align-items: center; justify-content: center;
-                font-size: 1.1rem;
-            ">➤</button>
-        </div>
-    </div>
 
     <div id="recovery-panel" class="modal-overlay" aria-hidden="true" style="display: none;">
         <div class="modal-content" role="dialog" style="max-width: 520px;">
-            <button class="close-btn" onclick="window.hideRecoveryPanel()" aria-label="Close recovery panel" data-i18n-aria-label="common.close">&times;</button>
+            <button class="close-btn" onclick="window.hideRecoveryPanel()" aria-label="Close recovery panel"
+                data-i18n-aria-label="common.close">&times;</button>
             <h2 style="margin-bottom: 12px;" data-i18n="recovery.title">Recovery Tools</h2>
             <p style="color: var(--text-muted); margin-bottom: 20px;" data-i18n="recovery.description">
                 Stored app data looks damaged. You can restore a previous JSON backup to recover the app.
             </p>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <button class="btn btn-primary" type="button" onclick="document.getElementById('restore-file-input').click()" data-i18n="recovery.restoreBackupFile">Restore Backup File</button>
-                <button class="btn btn-secondary" type="button" onclick="window.hideRecoveryPanel()" data-i18n="common.close">Close</button>
+                <button class="btn btn-primary" type="button"
+                    onclick="document.getElementById('restore-file-input').click()"
+                    data-i18n="recovery.restoreBackupFile">Restore Backup File</button>
+                <button class="btn btn-secondary" type="button" onclick="window.hideRecoveryPanel()"
+                    data-i18n="common.close">Close</button>
             </div>
             <input type="file" id="restore-file-input" accept=".json,application/json" style="display: none;">
         </div>
@@ -855,20 +1160,49 @@
     <!-- Success Toast Container -->
     <div id="toast-container"></div>
 
-    <script src="i18n.js?v=5.6.1"></script>
-    <script src="app.js?v=5.6.1"></script>
-    
+    <!-- Service Worker: registers sw.js which immediately clears all caches and unregisters itself -->
     <script>
-      // Install Background PWA Engine Check
-      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch(err => {
-            console.warn('Service worker registration failed.', err);
-          });
-        });
-      }
+        if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+            navigator.serviceWorker.register('./sw.js?v=6.1.0', { updateViaCache: 'none' })
+                .catch(function () { }); // Silently ignore if SW registration fails
+        }
     </script>
+
+    <!-- Instant Login Render: Bypass wait for Firebase SDK downloads -->
+    <script>
+        (function instantLoginRender() {
+            try {
+                const userStr = localStorage.getItem('sessionUser');
+                const expiryStr = localStorage.getItem('sessionExpiry');
+                let session = null;
+                if (userStr && expiryStr && Date.now() <= parseInt(expiryStr)) {
+                    session = JSON.parse(userStr);
+                }
+
+                if (!session) {
+                    // Instantly show login UI and hide splash screen
+                    document.getElementById('login-screen').style.display = 'flex';
+                    const splash = document.getElementById('splash-screen');
+                    if (splash) {
+                        splash.classList.add('fade-out');
+                        setTimeout(() => splash.style.display = 'none', 650);
+                    }
+                }
+            } catch (e) {
+                document.getElementById('login-screen').style.display = 'flex';
+                const splash = document.getElementById('splash-screen');
+                if (splash) splash.style.display = 'none';
+            }
+        })();
+    </script>
+
+    <!-- Libraries and App Logic: loaded in dependency order -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script defer src="i18n.js?v=6.1.0"></script>
+    <script defer src="app.js?v=6.1.0"></script>
+
 </body>
+
 </html>
-
-
